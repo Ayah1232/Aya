@@ -1,0 +1,4 @@
+orderNum	CusID	category	material	Color	dimention	payType	quantity	picture	status	IsReq	price	rate
+orderNum	CusID	category	material	Color	dimention	payType	quantity	picture	status	IsReq	price	rate
+0	140	cover	wool	red	34.0,44.0	cash	3	Aya.png	in treatment	true	1500	4
+1	170	carpet	Cotton	silver	43.0,44.0	cash	2	A.jpeg	waiting	false	1200	3		

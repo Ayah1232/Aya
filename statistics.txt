@@ -1,0 +1,4 @@
+Total Delivered: 3.0
+Total Cash: 1500.0
+Total Paid: 1500.0
+Total Debts: 0.0

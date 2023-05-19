@@ -1,0 +1,6 @@
+id	Name	phone	Address	City	email	Password
+140	Aya	44444	Mamoon	Nablus	Aya@gmail.com	Ayoosha12
+170	Lana	88888	Ma'amoon	Nablus	lOli@gmail.com	nonN123
+222	Jana	12345	Maamoon	Nablus	jojo@gmail.com	123Jana
+310	Tuqa	98765	Makhfiyya	Nablus	tuqa@gmail.com	Tuqa1234567
+111	Aya	67898	Nablus Aljadida	Nablus	yoyA@gmail.com	1234Yy

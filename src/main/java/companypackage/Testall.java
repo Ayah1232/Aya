@@ -30,13 +30,13 @@ public class Testall {
 	private static final String FILENAME = "Customers.txt";
 	private static final Logger LOGGER = Logger.getLogger(Testall.class.getName());
 	static final String YESORNO = "press 1 for yes , 2 for No";
-	private static final String CATEGORY = "category";
-	private static final String MATERIAL = "material";
-	private static final String COLOR = "color";
-	private static final String DIMENTION = "dimention";
-	private static final String PAYMENTYPE = "payment type";
-	private static final String QUANTITY = "quantity";
-	private static final String PICTURE = "picture";
+	private static final String CATEGORY_FIELD = "category";
+	private static final String MATERIAL_FIELD = "material";
+	private static final String COLOR_FIELD = "color";
+	private static final String DIMENTION_FIELD = "dimention";
+	private static final String PAYMENTYPE_FIELD = "payment type";
+	private static final String QUANTITY_FIELD = "quantity";
+	private static final String PICTURE_FIELD = "picture";
 
 	public static void main(String[] args) {
 		Scanner scanner3 = new Scanner(System.in);
@@ -106,7 +106,7 @@ public class Testall {
 
 		if (isValidCredentials) {
 			String name = Customer.findNameByEmail(user);
-			LOGGER.info("Welcome, " + name);
+			LOGGER.info(String.format("Welcome, %s" , name));
 
 			int press;
 
@@ -149,6 +149,12 @@ public class Testall {
 	private static void deleteOrder(Scanner scanner2, String user) {
 	    boolean exit = false;
 
+	    boolean shouldInvoke = true; // Set your condition here
+
+	    if (!shouldInvoke) {
+	        return;
+	    }
+
 	    while (!exit) {
 	        LOGGER.info("Which order do you want to delete? Enter the order number or choose an option:");
 	        LOGGER.info("Press 1 to go to track");
@@ -173,11 +179,12 @@ public class Testall {
 	                exit = true; // Set exit to true to break out of the loop
 	                break;
 	            default:
-	                LOGGER.warning(String.format("Invalid input %d" , press));
+	                LOGGER.warning(String.format("Invalid input %d", press));
 	                break;
 	        }
 	    }
 	}
+
 
 
 	private static void trackOrders(String user) {
@@ -233,18 +240,22 @@ public class Testall {
 
 		customerProductNumber = Product.getLastOrderNumber();
 		customerProductNumber++;
-
+		
+	
 		Product.createProduct(customerProductNumber, id, dimension, material, color, category, payType, q, picture,
 				Product.calculatePrice(category, height, width, rst, q));
-		System.out.println("Are you sure you want this order");
-		System.out.println("press 1 for Yes");
-		System.out.println("press 2 for No");
+		LOGGER.info("Are you sure you want this order");
+		LOGGER.info("press 1 for Yes");
+		LOGGER.info("press 2 for No");
 
 		press = scanner2.nextInt();
 		if (press == 1)
 			Product.addProduct();
-		else if (press == 2)
+		else 
+		{
+			LOGGER.warning("Invalid input!");
 			return;
+		}
 
 	}
 
@@ -263,100 +274,109 @@ public class Testall {
 
 		String[] rowFile = row.split("\t");
 
-		updateField(scanner2, CATEGORY, rowFile[2], scanner);
-		updateField(scanner2, MATERIAL, rowFile[3], scanner);
-		updateField(scanner2, COLOR, rowFile[4], scanner);
-		updateField(scanner2, DIMENTION, rowFile[5], scanner3);
-		updateField(scanner2, PAYMENTYPE, rowFile[6], scanner);
-		updateField(scanner2, QUANTITY, rowFile[7], scanner2);
-		updateField(scanner2, PICTURE, rowFile[8], scanner);
+		updateField(scanner2, CATEGORY_FIELD, rowFile[2], scanner);
+		updateField(scanner2, MATERIAL_FIELD, rowFile[3], scanner);
+		updateField(scanner2, COLOR_FIELD, rowFile[4], scanner);
+		updateField(scanner2, DIMENTION_FIELD, rowFile[5], scanner3);
+		updateField(scanner2, PAYMENTYPE_FIELD, rowFile[6], scanner);
+		updateField(scanner2, QUANTITY_FIELD, rowFile[7], scanner2);
+		updateField(scanner2, PICTURE_FIELD, rowFile[8], scanner);
 
-		/*Product.updateProduct(customerProductNumber, rowFile[1], category, material, color, dimention, payType, q,
-				picture, rowFile[9], rowFile[10],
-				Double.toString(Product.calculatePrice(category, height, width, rst, q)), 0);*/
-
+		
 	}
 
 	private static void updateField(Scanner scanner2, String fieldName, String defaultValue, Scanner scanner) {
-		LOGGER.info("Do you want to update " + fieldName + "?");
-		LOGGER.info(YESORNO);
+		LOGGER.info(String.format("Do you want to update %s?", fieldName));
+	    LOGGER.info(YESORNO);
 	    int press = scanner2.nextInt();
 	    scanner2.nextLine(); // Consume the newline character
 
 	    if (press == 1) {
-	        String updatedValue = null;
-	        if (fieldName.equals("dimension")) {
-	        	LOGGER.info("Enter height:");
-	            double height = scanner.nextDouble();
-	            LOGGER.info("Enter width:");
-	            double width = scanner.nextDouble();
-	            scanner.nextLine(); // Consume the newline character
-	            updatedValue = height + "," + width;
-	        } else {
-	        	LOGGER.info("Enter " + fieldName + ":");
-	            updatedValue = scanner.nextLine();
-	        }
-	        
-	        if (!updatedValue.isEmpty()) {
-	            switch (fieldName) {
-	                case CATEGORY:
-	                    category = updatedValue;
-	                    break;
-	                case MATERIAL:
-	                    material = updatedValue;
-	                    rst = material.equalsIgnoreCase("wool");
-	                    break;
-	                case COLOR:
-	                    color = updatedValue;
-	                    break;
-	                case DIMENTION:
-	                    dimention = updatedValue;
-	                    break;
-	                case PAYMENTYPE:
-	                    payType = updatedValue;
-	                    break;
-	                case QUANTITY:
-	                    q = Integer.parseInt(updatedValue);
-	                    break;
-	                case PICTURE:
-	                    picture = updatedValue;
-	                    break;
-	                    
-	                default:
-	                	LOGGER.warning("Invalid field name.");
-	                    break;
-	            }
+	        String updatedValue = getUpdatedValue(fieldName, scanner);
+	        if (updatedValue != null && !updatedValue.isEmpty()) {
+	            updateFieldValue(fieldName, updatedValue);
 	        }
 	    } else if (press == 2) {
-	        switch (fieldName) {
-	            case CATEGORY:
-	                category = defaultValue;
-	                break;
-	            case MATERIAL:
-	                material = defaultValue;
-	                rst = defaultValue.equalsIgnoreCase("wool");
-	                break;
-	            case COLOR:
-	                color = defaultValue;
-	                break;
-	            case DIMENTION:
-	                dimention = defaultValue;
-	                break;
-	            case PAYMENTYPE:
-	                payType = defaultValue;
-	                break;
-	            case QUANTITY:
-	                q = Integer.parseInt(defaultValue);
-	                break;
-	            case PICTURE:
-	                picture = defaultValue;
-	                break;
-	            default:
-	            	LOGGER.warning("Invalid field name.");
-                    break;
-	        }
+	        restoreDefaultValue(fieldName, defaultValue);
+	    } else {
+	        LOGGER.warning("Invalid option.");
 	    }
 	}
+
+	private static String getUpdatedValue(String fieldName, Scanner scanner) {
+	    if (fieldName.equals(DIMENTION_FIELD)) {
+	        LOGGER.info("Enter height:");
+	        double height = scanner.nextDouble();
+	        LOGGER.info("Enter width:");
+	        double width = scanner.nextDouble();
+	        scanner.nextLine(); // Consume the newline character
+	        return height + "," + width;
+	    } else {
+	    	LOGGER.info(String.format("Enter %s:", fieldName));
+	        return scanner.nextLine();
+	    }
+	}
+
+	private static void updateFieldValue(String fieldName, String updatedValue) {
+	    switch (fieldName) {
+	        case CATEGORY_FIELD:
+	            category = updatedValue;
+	            break;
+	        case MATERIAL_FIELD:
+	            material = updatedValue;
+	            rst = material.equalsIgnoreCase("wool");
+	            break;
+	        case COLOR_FIELD:
+	            color = updatedValue;
+	            break;
+	        case DIMENTION_FIELD:
+	            dimention = updatedValue;
+	            break;
+	        case PAYMENTYPE_FIELD:
+	            payType = updatedValue;
+	            break;
+	        case QUANTITY_FIELD:
+	            q = Integer.parseInt(updatedValue);
+	            break;
+	        case PICTURE_FIELD:
+	            picture = updatedValue;
+	            break;
+	        default:
+	            LOGGER.warning("Invalid field name.");
+	            break;
+	    }
+	}
+
+	private static void restoreDefaultValue(String fieldName, String defaultValue) {
+	    switch (fieldName) {
+	        case CATEGORY_FIELD:
+	            category = defaultValue;
+	            break;
+	        case MATERIAL_FIELD:
+	            material = defaultValue;
+	            rst = defaultValue.equalsIgnoreCase("wool");
+	            break;
+	        case COLOR_FIELD:
+	            color = defaultValue;
+	            break;
+	        case DIMENTION_FIELD:
+	            dimention = defaultValue;
+	            break;
+	        case PAYMENTYPE_FIELD:
+	            payType = defaultValue;
+	            break;
+	        case QUANTITY_FIELD:
+	            q = Integer.parseInt(defaultValue);
+	            break;
+	        case PICTURE_FIELD:
+	            picture = defaultValue;
+	            break;
+	        default:
+	            LOGGER.warning("Invalid field name.");
+	            break;
+	    }
+	}
+
 
 
 	private static void signUp(Scanner scanner, Scanner scanner2) {
@@ -390,9 +410,7 @@ public class Testall {
 		if (press == 1) {
 			Customer.createCustomer(id, name, phone, address, city, email, password);
 			Customer.addCustomer(FILENAME);
-		} else {
-			return;
-		}
+		} 
 	}
 
 	private static void adminMenu(Scanner scanner) {

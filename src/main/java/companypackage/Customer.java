@@ -24,6 +24,9 @@ public class Customer {
 	private static final String FILENAME = "Customers.txt";
 	private static final String PRODUCTS_FILENAME = "Products.txt";
 	private static final String COMPLETE = "complete";
+	private static final String ERROR_MESSAGE_FORMAT = "An error occurred: %s";
+
+
 
 	private static String id;
 	private static String name;
@@ -408,7 +411,7 @@ public class Customer {
 	        }
 	        reader.close();
 	    } catch (IOException e) {
-	        LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
+        LOGGER.warning(String.format(ERROR_MESSAGE_FORMAT, e.getMessage()));
 	    }
 	    return name;
 	}
@@ -431,7 +434,7 @@ public class Customer {
 	        }
 	        reader.close();
 	    } catch (IOException e) {
-	        LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
+	        LOGGER.warning(String.format(ERROR_MESSAGE_FORMAT, e.getMessage()));
 	    }
 	    return id;
 	}
@@ -573,7 +576,7 @@ public class Customer {
 	        LOGGER.info("This is your statistics");
 
 	    } catch (IOException e) {
-	        LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
+	        LOGGER.warning(String.format(ERROR_MESSAGE_FORMAT, e.getMessage()));
 	    }
 	}
 

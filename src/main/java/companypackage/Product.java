@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 	private static final String PRODUCT_FILENAME = "Products.txt";
 	private static final String ERROR = "Error: ";
 	private static final Logger LOGGER = Logger.getLogger(Product.class.getName());
-
+	public static final String LINE_FORMAT = "%s%s%n";
 	private Product()
 	{
 		
@@ -130,6 +130,7 @@ import java.util.logging.Logger;
 
 	}
 
+
 	private static  void setRate(int i) {
 
 		rate = i;
@@ -144,11 +145,11 @@ import java.util.logging.Logger;
 			FileWriter writer = new FileWriter(PRODUCT_FILENAME, true);
 			if (getCategory() != null && getCID() != null && getDimention() != null
 					&& getMaterial() != null && getColor() != null && getPayment() != null
-					&& getQuantity() != 0 && getpicture() != null && getStatus() != null
+					&& getQuantity() != 0 && getPicture() != null && getStatus() != null
 					&& getPrice() != 0) {
 				writer.write(getNumber() + "\t" + getCID() + "\t" + getCategory() + "\t"
 						+ getMaterial() + "\t" + getColor() + "\t" + getDimention() + "\t"
-						+ getPayment() + "\t" + getQuantity() + "\t" + getpicture() + "\t"
+						+ getPayment() + "\t" + getQuantity() + "\t" + getPicture() + "\t"
 						+ getStatus() + "\t" + getIRS() + "\t" +  getPrice() + "\t"
 						+ getRate() + "\n");
 				writer.close();
@@ -178,7 +179,7 @@ import java.util.logging.Logger;
 		return isrequiredSpecialTreatment;
 	}
 
-	private static  String getpicture() {
+	private static  String getPicture() {
 
 		return picture;
 	}
@@ -282,9 +283,9 @@ import java.util.logging.Logger;
 			while ((line = reader.readLine()) != null) {
 				String[] data = line.split("\t"); 
 				if (data[1].equals(customerId)) { 
-					LOGGER.info("order with number " + data[0] + "  category " + data[2] + " Material " + data[3]
-							+ " Color " + data[4] + " dimention " + data[5] + " quantity " + data[7] + " picture "
-							+ data[8] + " is now in " + data[9] + " status" + "\n");
+					LOGGER.info(String.format("Order with number %s, category %s, material %s, color %s, dimension %s, quantity %s, picture %s is now in %s status%n",
+						    data[0], data[2], data[3], data[4], data[5], data[7], data[8], data[9]));
+
 					b = true;
 					if (data[9].equalsIgnoreCase("complete")) {
 						LOGGER.info("How do you rate our cleaning?");
@@ -314,136 +315,151 @@ import java.util.logging.Logger;
 	}
 
 	public static void deleteProduct(int idToDelete) {
+	    try {
+	        File inputFile = new File(PRODUCT_FILENAME);
+	        final String PRODUCT_NUMBER_PREFIX = "product with number ";
+	        File tempFile = new File("temp.txt");
 
-		try {
-			File inputFile = new File(PRODUCT_FILENAME);
-			final String PRODUCT_NUMBER_PREFIX = "product with number ";
+	        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 
-			File tempFile = new File("temp.txt");
+	        String headerLine = reader.readLine();
 
-			BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+	        writer.write(headerLine + System.lineSeparator());
 
-			String headerLine = reader.readLine();
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            String[] parts = line.split("\t");
+	            int id = Integer.parseInt(parts[0]);
+	            String status = parts[9];
+	            if (id == idToDelete && status.equals("waiting")) {
+	                LOGGER.log(java.util.logging.Level.SEVERE,
+	                        String.format("%s%s and status waiting deleted!", PRODUCT_NUMBER_PREFIX, idToDelete));
+	            } else if (id != idToDelete) {
+	                writer.write(line + System.lineSeparator());
+	            } else {
+	                LOGGER.log(java.util.logging.Level.WARNING,
+	                        String.format("%s%s cannot be deleted due to invalid status", PRODUCT_NUMBER_PREFIX, idToDelete));
+	            }
+	        }
 
-			writer.write(headerLine + System.lineSeparator());
+	        reader.close();
+	        writer.close();
 
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split("\t");
-				int id = Integer.parseInt(parts[0]);
-				String status = parts[9];
-				if (id == idToDelete && status.equals("waiting")) {
-					LOGGER.log(java.util.logging.Level.SEVERE,
-						     String.format("%s%s and status waiting deleted!", PRODUCT_NUMBER_PREFIX, idToDelete));
+	        // Delete the input file and rename the temporary file to the input file name
+	        boolean deleteInputFile = inputFile.delete();
+	        if (!deleteInputFile) {
+	            LOGGER.log(java.util.logging.Level.WARNING,
+	                    String.format("Could not delete input file: %s", inputFile.getName()));
+	        }
 
-				} else if (id != idToDelete) {
-					writer.write(line + System.lineSeparator());
-				} else {
-					LOGGER.log(java.util.logging.Level.WARNING,
-						   String.format("%s%s cannot be deleted due to invalid status", PRODUCT_NUMBER_PREFIX, idToDelete));
+	        boolean renameSuccess = tempFile.renameTo(inputFile);
+	        if (!renameSuccess) {
+	            LOGGER.log(java.util.logging.Level.WARNING,
+	                    String.format("Could not rename temp file: %s", tempFile.getName()));
+	        }
 
-				}
-
-			}
-
-			reader.close();
-			writer.close();
-
-			// Delete the input file and rename the temporary file to the input file name
-			if (!inputFile.delete()) {
-				LOGGER.log(java.util.logging.Level.WARNING,
-					    String.format("Could not delete input file: %s", inputFile.getName()));
-				return;
-			}
-			if (!tempFile.renameTo(inputFile)) {
-				LOGGER.log(java.util.logging.Level.WARNING,
-					    String.format("Could not rename temp file: %s", tempFile.getName()));
-			}
-
-		} catch (IOException e) {
-			LOGGER.log(java.util.logging.Level.SEVERE,
-				     String.format("%s%s", ERROR, e.getMessage()),
-				    e);
-		}
+	    } catch (IOException e) {
+	        LOGGER.log(java.util.logging.Level.SEVERE,
+	                String.format("%s%s", ERROR, e.getMessage()),
+	                e);
+	    }
 	}
 
-	public static void updateProduct(int orderNumToUpdate, String cusId, String category, String material, String color,
-            String dimention, String payType, int quantity, String picture, String status,
-            String isReq, String price, int rate) {
 
-try {
-File inputFile = new File(PRODUCT_FILENAME);
-File tempFile = new File("temp.txt");
+	  public static void updateProduct(Product updateData) {
+	        try {
+	            File inputFile = new File(PRODUCT_FILENAME);
+	            File tempFile = new File("temp.txt");
 
-try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+	            try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	                 BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
 
-String headerLine = reader.readLine();
+	                String headerLine = reader.readLine();
 
-writer.write(String.format("%s%s%n", headerLine, System.lineSeparator()));
+	                writer.write(String.format(LINE_FORMAT, headerLine, System.lineSeparator()));
 
-String line;
-while ((line = reader.readLine()) != null) {
-String[] fields = line.split("\t");
-int id = Integer.parseInt(fields[0]);
-if (id != orderNumToUpdate) {
-writer.write(String.format("%s%s%n", line, System.lineSeparator()));
-} else {
-String updatedLine = String.format("%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%s\t%s\t%s\t%s\t%d",
-       orderNumToUpdate, cusId, category, material, color, dimention, payType, quantity,
-       picture, status, isReq, price, rate);
-writer.write(String.format("%s%s%n", updatedLine, System.lineSeparator()));
-LOGGER.log(java.util.logging.Level.SEVERE, String.format("product with number %d updated!", orderNumToUpdate));
-}
-}
-}
+	                String line;
+	                boolean found = false;
+	                while ((line = reader.readLine()) != null) {
+	                    String[] fields = line.split("\t");
+	                    int id = Integer.parseInt(fields[0]);
+	                    if (id != updateData.getNumber()) {
+	                        writer.write(String.format(LINE_FORMAT, line, System.lineSeparator()));
+	                    } else {
+	                        String updatedLine = String.format("%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%s\t%s\t%s\t%s\t%d",
+	                                updateData.getNumber(), updateData.getCID(), updateData.getCategory(),
+	                                updateData.getMaterial(), updateData.getColor(), updateData.getDimention(),
+	                                updateData.getPayment(), updateData.getQuantity(), updateData.getPicture(),
+	                                updateData.getStatus(), updateData.getIRS(), updateData.getPrice(), updateData.getRate());
+	                        writer.write(String.format(LINE_FORMAT, updatedLine, System.lineSeparator()));
+	                        LOGGER.log(java.util.logging.Level.SEVERE,
+	                                String.format("product with number %d updated!", updateData.getNumber()));
+	                        found = true;
+	                    }
+	                }
 
-if (!inputFile.delete()) {
-LOGGER.log(java.util.logging.Level.WARNING, String.format("Could not delete input file: %s", inputFile.getName()));
-return;
-}
-if (!tempFile.renameTo(inputFile)) {
-LOGGER.log(java.util.logging.Level.WARNING, String.format("Could not rename temp file: %s", tempFile.getName()));
-}
+	                if (!found) {
+	                    LOGGER.log(java.util.logging.Level.WARNING,
+	                            String.format("No product found with number %d", updateData.getNumber()));
+	                }
+	            }
 
-} catch (IOException e) {
-LOGGER.log(java.util.logging.Level.SEVERE, String.format("%s%s", ERROR, e.getMessage()), e);
-}
-}
+	            boolean deleteInputFile = inputFile.delete();
+	            if (!deleteInputFile) {
+	                LOGGER.log(java.util.logging.Level.WARNING,
+	                        String.format("Could not delete input file: %s", inputFile.getName()));
+	            }
+
+	            boolean renameSuccess = tempFile.renameTo(inputFile);
+	            if (!renameSuccess) {
+	                LOGGER.log(java.util.logging.Level.WARNING,
+	                        String.format("Could not rename temp file: %s", tempFile.getName()));
+	            }
+
+	        } catch (IOException e) {
+	            LOGGER.log(java.util.logging.Level.SEVERE, String.format("%s%s", ERROR, e.getMessage()), e);
+	        }
+	    }
 
 
-	public static  String getRowByProductNumber(int productNumber) {
-		String row = null;
-		try {
-			File inputFile = new File(PRODUCT_FILENAME);
-			BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	  public static String getRowByProductNumber(int productNumber) {
+		    boolean condition = true;  // Set your condition here
 
-			reader.readLine();
+		    if (!condition) {
+		        return null;
+		    }
 
-			String line;
-			while ((line = reader.readLine()) != null) {
-				int id = Integer.parseInt(line.split("\t")[0]);
-				if (id == productNumber) {
-					row = line;
-					break;
-				}
-			}
+		    String row = null;
+		    try {
+		        File inputFile = new File(PRODUCT_FILENAME);
+		        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 
-			reader.close();
+		        reader.readLine();
 
-		} catch (IOException e) {
-			LOGGER.warning(String.format( "%s %s", ERROR, e.getMessage()));
+		        String line;
+		        while ((line = reader.readLine()) != null) {
+		            int id = Integer.parseInt(line.split("\t")[0]);
+		            if (id == productNumber) {
+		                row = line;
+		                break;
+		            }
+		        }
+
+		        reader.close();
+
+		    } catch (IOException e) {
+		        LOGGER.warning(String.format("%s %s", ERROR, e.getMessage()));
+		    }
+
+		    if (row == null) {
+		        LOGGER.warning(String.format("No order found with number %d", productNumber));
+		        return null;
+		    }
+
+		    return row;
 		}
 
-		if (row == null) {
-			LOGGER.warning(String.format("No order found with number %d", productNumber));
-			return null;
-
-		}
-
-		return row;
-	}
 
 	public static  double calculatePrice(String category, double height, double width, boolean needsSpecialTreatment,
 			int q) {

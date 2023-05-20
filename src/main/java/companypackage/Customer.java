@@ -305,7 +305,7 @@ public class Customer {
 
 	        while ((line = raf.readLine()) != null) {
 	            String[] parts = line.split("\t");
-	            if (parts.length == 8 && parts[0].trim().equals(customer.getId())) {
+	            if (parts.length == 8 && parts[0].trim().equals(Customer.getId())) {
 	                found = true;
 	                break;
 	            }

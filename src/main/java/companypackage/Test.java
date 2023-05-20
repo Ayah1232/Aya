@@ -1,5 +1,8 @@
 package companypackage;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -98,33 +101,47 @@ public class Test {
 			return true;
 		}
 	}
-
 	public static void sendEmail(String recipient, String subject, String body) throws MessagingException {
-		String host = "smtp.gmail.com";
-		String port = "465";
-		final String username = "cleaningserviceam2023@gmail.com";
-		final String password = "123123AyaManar";
+	    String host = "smtp.gmail.com";
+	    String port = "465";
+	    String username = null;
+	    String password = null;
 
-		Properties props = new Properties();
-		props.put("mail.smtp.host", host);
-		props.put("mail.smtp.port", port);
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.ssl.enable", "true");
+	    try (BufferedReader reader = new BufferedReader(new FileReader("Admin.txt"))) {
+	        String discardLine = reader.readLine();
+	        String discardLine2 = reader.readLine();
 
-		Session session = createSession(props, username, password);
+	        String usernameLine = reader.readLine();
+	        username = usernameLine.trim();
+	        String passwordLine = reader.readLine();
+	        password = passwordLine.trim();
 
-		MimeMessage message = createMimeMessage(session, username, recipient, subject, body);
+	        
+	    } catch (IOException e) {
+	        LOGGER.warning(String.format("An error occurred while reading Admin.txt: %s", e.getMessage()));
+	    }
 
-		sendMessage(message);
+	    Properties props = new Properties();
+	    props.put("mail.smtp.host", host);
+	    props.put("mail.smtp.port", port);
+	    props.put("mail.smtp.auth", "true");
+	    props.put("mail.smtp.ssl.enable", "true");
+
+	    Session session = createSession(props, username, password);
+
+	    MimeMessage message = createMimeMessage(session, username, recipient, subject, body);
+
+	    sendMessage(message);
 	}
 
 	private static Session createSession(Properties props, final String username, final String password) {
-		return Session.getInstance(props, new javax.mail.Authenticator() {
-			protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+	    return Session.getInstance(props, new javax.mail.Authenticator() {
+	    	protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
 				return new javax.mail.PasswordAuthentication(username, password);
-			}
-		});
+	        }
+	    });
 	}
+
 
 	private static MimeMessage createMimeMessage(Session session, String from, String to, String subject, String body)
 			throws MessagingException {

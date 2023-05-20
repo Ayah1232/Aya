@@ -379,7 +379,7 @@ BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
 
 String headerLine = reader.readLine();
 
-writer.write(String.format("%s%s%n", headerLine, System.lineSeparator()));
+writer.write(String.format(LINE_FORMAT, headerLine, System.lineSeparator()));
 
 String line;
 while ((line = reader.readLine()) != null) {

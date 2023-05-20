@@ -410,42 +410,43 @@ LOGGER.log(java.util.logging.Level.SEVERE, String.format("%s%s", ERROR, e.getMes
 }
 }
 
-	  public static String getRowByProductNumber(int productNumber) {
-		    boolean condition = true;  // Set your condition here
+	public static String getRowByProductNumber(int productNumber) {
+	    boolean condition = true;  // Set your condition here
 
-		    if (!condition) {
-		        return null;
-		    }
+	    if (!condition) {
+	        return null;
+	    }
 
-		    String row = null;
-		    try {
-		        File inputFile = new File(PRODUCT_FILENAME);
-		        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	    String row = null;
+	    try {
+	        File inputFile = new File(PRODUCT_FILENAME);
+	        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 
-		        reader.readLine();
+	        String headerLine = reader.readLine(); // Store the header line
 
-		        String line;
-		        while ((line = reader.readLine()) != null) {
-		            int id = Integer.parseInt(line.split("\t")[0]);
-		            if (id == productNumber) {
-		                row = line;
-		                break;
-		            }
-		        }
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            int id = Integer.parseInt(line.split("\t")[0]);
+	            if (id == productNumber) {
+	                row = line;
+	                break;
+	            }
+	        }
 
-		        reader.close();
+	        reader.close();
 
-		    } catch (IOException e) {
-		        LOGGER.warning(String.format("%s %s", ERROR, e.getMessage()));
-		    }
+	        if (row == null) {
+	            LOGGER.warning(String.format("No order found with number %d", productNumber));
+	            return null;
+	        }
 
-		    if (row == null) {
-		        LOGGER.warning(String.format("No order found with number %d", productNumber));
-		        return null;
-		    }
+	    } catch (IOException e) {
+	        LOGGER.warning(String.format("%s %s", ERROR, e.getMessage()));
+	    }
 
-		    return row;
-		}
+	    return row;
+	}
+
 
 
 	public static  double calculatePrice(String category, double height, double width, boolean needsSpecialTreatment,

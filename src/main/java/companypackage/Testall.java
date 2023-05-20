@@ -254,7 +254,7 @@ public class Testall {
 		else 
 		{
 			LOGGER.warning("Invalid input!");
-			return;
+			
 		}
 
 	}
@@ -281,6 +281,10 @@ public class Testall {
 		updateField(scanner2, PAYMENTYPE_FIELD, rowFile[6], scanner);
 		updateField(scanner2, QUANTITY_FIELD, rowFile[7], scanner2);
 		updateField(scanner2, PICTURE_FIELD, rowFile[8], scanner);
+		
+		Product.updateProduct(customerProductNumber, rowFile[1], category, material, color, dimention, payType, q,
+				picture, rowFile[9], rowFile[10],
+				Double.toString(Product.calculatePrice(category, height, width, rst, q)), 0);
 
 		
 	}

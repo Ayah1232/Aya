@@ -48,10 +48,12 @@ public class Customer {
 	}
 
 
+	private static final String ERROR_MESSAGE = "Customer creation failed due to invalid input.";
+	private static final String WELCOME_MESSAGE = "Welcome to our application, %s!";
+
 	public static void createCustomer(String id, String n, String phone, String add, String city, String email,
 	        String password) 
 	{
-		
 	    if (!Test.checkID(id)) {
 	        LOGGER.warning("ID is wrong!");
 	        return;
@@ -103,11 +105,12 @@ public class Customer {
 	        Customer.setId(id);
 	        Customer.setFrequently(0);
 
-	        LOGGER.log(java.util.logging.Level.SEVERE, String.format("Welcome to our application, %s!", Customer.getName()));
+	        LOGGER.info(String.format(WELCOME_MESSAGE, Customer.getName()));
 	    } else {
-	        LOGGER.warning("Customer creation failed due to invalid input.");
+	        LOGGER.warning(ERROR_MESSAGE);
 	    }
 	}
+
 
 
 	private static void setFrequently(int i) {
@@ -140,7 +143,7 @@ public class Customer {
 	            if (id != idToDelete) {
 	                writer.write(line + System.lineSeparator());
 	            } else {
-	                LOGGER.log(java.util.logging.Level.SEVERE, String.format("Customer with id %s deleted!", idToDelete));
+	                LOGGER.info(String.format("Customer with id %s deleted", idToDelete));
 	            }
 	        }
 
@@ -149,18 +152,17 @@ public class Customer {
 
 	        if (inputFile.delete()) {
 	            if (!tempFile.renameTo(inputFile)) {
-	                LOGGER.log(java.util.logging.Level.WARNING,
-	                        String.format("Could not rename temp file: %s", tempFile.getName()));
+	                LOGGER.warning(String.format("Could not rename temp file: %s", tempFile.getName()));
 	            }
 	        } else {
-	            LOGGER.log(java.util.logging.Level.WARNING,
-	                    String.format("Could not delete input file: %s", inputFile.getName()));
+	            LOGGER.warning(String.format("Could not delete input file: %s", inputFile.getName()));
 	        }
 
 	    } catch (IOException e) {
-	        LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error: %s", e.getMessage()), e);
+	        LOGGER.log(java.util.logging.Level.SEVERE, "An error occurred during customer deletion", e);
 	    }
 	}
+
 
 	public static void setId(String iD2) {
 
@@ -297,7 +299,9 @@ public class Customer {
 		return phone;
 	}
 
-	public static void updateCustomer(Customer customer) {
+	public static void updateCustomer(String id, String name, String address, String city, String password,
+	        String email, String phone, int freq) {
+
 	    try (RandomAccessFile raf = new RandomAccessFile(FILENAME, "rw")) {
 	        String line;
 	        long pos = 0;
@@ -308,7 +312,7 @@ public class Customer {
 
 	        while ((line = raf.readLine()) != null) {
 	            String[] parts = line.split("\t");
-	            if (parts.length == 8 && parts[0].trim().equals(Customer.getId())) {
+	            if (parts.length == 8 && parts[0].trim().equals(id)) { // trim the id value to remove any leading/trailing whitespace
 	                found = true;
 	                break;
 	            }
@@ -316,7 +320,7 @@ public class Customer {
 	        }
 
 	        if (found) {
-	            // Update the customer data
+	            // update the customer data
 	            raf.seek(pos);
 	            StringBuilder sb = new StringBuilder();
 	            sb.append(Customer.getId()).append("\t")
@@ -329,14 +333,15 @@ public class Customer {
 	                    .append(Customer.getFreq()).append("\n");
 
 	            raf.writeBytes(sb.toString());
-	            LOGGER.info(String.format("Customer with ID %s updated successfully.", Customer.getId()));
+	            LOGGER.info(String.format("Customer with ID %s updated successfully.", id));
 	        } else {
-	            LOGGER.warning(String.format("Customer with ID %s not found.", Customer.getId()));
+	            LOGGER.warning(String.format("Customer with ID %s not found.", id));
 	        }
 	    } catch (IOException e) {
 	        LOGGER.log(java.util.logging.Level.WARNING, String.format("Error updating customer: %s", e.getMessage()));
 	    }
 	}
+
 
 
 	public static List<Customer> findByName(String fileName, String name) {
@@ -461,8 +466,6 @@ public class Customer {
 
 	        if (row == null) {
 	            LOGGER.warning(String.format("No order found with email %s", email));
-	            // return null or throw an exception based on your requirement
-	            return null;
 	        }
 	    } catch (IOException e) {
 	        LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error: %s", e.getMessage()), e);
@@ -470,8 +473,6 @@ public class Customer {
 
 	    return row;
 	}
-
-
 
 	public static void generateInvoice(String customerEmail) {
 	    try {

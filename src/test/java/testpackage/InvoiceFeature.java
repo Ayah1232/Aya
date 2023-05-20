@@ -89,7 +89,7 @@ public class InvoiceFeature {
 	@Then("a statistics should be generated")
 	public void a_statistics_should_be_generated() {
 		n = true;
-		assertEquals(n , true);
+		assertEquals(true , n);
 		
 		System.out.println("Statistic        "+ "Value");
 		System.out.println("------------     "+"---------");

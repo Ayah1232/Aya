@@ -12,7 +12,7 @@ import io.cucumber.java.en.When;
 
 public class LogInFeature {
 
-	public  String keyName = "yasmeen", valuePass ="5466";
+	public  String keyName, valuePass ;
     boolean flag =true;
     int i ;
     Customer c;

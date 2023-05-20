@@ -1,5 +1,8 @@
 package companypackage;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -24,8 +27,7 @@ public class Testall {
 	private static String picture;
 	private static String category;
 	private static boolean rst;
-	private static String adminName = "Ali";
-	private static String adminPassword = "123";
+	
 
 	private static final String FILENAME = "Customers.txt";
 	private static final Logger LOGGER = Logger.getLogger(Testall.class.getName());
@@ -449,7 +451,15 @@ public class Testall {
 	}
 
 	private static boolean isAdmin(String username, String password) {
-		return username.equals(adminName) && password.equals(adminPassword);
+	    try (BufferedReader reader = new BufferedReader(new FileReader("Admin.txt"))) {
+	        String adminName = reader.readLine();
+	        String adminPassword = reader.readLine();
+	        return username.equals(adminName) && password.equals(adminPassword);
+	    } catch (IOException e) {
+	        LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
+	    }
+	    return false;
 	}
+
 
 }

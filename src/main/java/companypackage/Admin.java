@@ -118,46 +118,45 @@ public class Admin {
 	}
 
 	public static void generateReport() {
-		try {
-			// Read Products.txt
+	    try {
+	        // Read Products.txt
+	        BufferedReader productReader = new BufferedReader(new FileReader(PRODUCTFILE));
 
-			BufferedReader reader = new BufferedReader(new FileReader(PRODUCTFILE));
+	        // Print column headers for the relevant columns
+	        String productHeaders = String.format("%-10s%-15s%-15s%-10s%n", "Order No.", "Customer ID", "Category",
+	                "Rating");
 
-			// Print column headers for the relevant columns
-			String productHeaders = String.format("%-10s%-15s%-15s%-10s%n", "Order No.", "Customer ID", "Category",
-					"Rating");
+	        FileWriter writer = new FileWriter("Report.txt");
+	        writer.write(productHeaders);
 
-			FileWriter writer = new FileWriter("Report.txt");
-			writer.write(productHeaders);
+	        String line;
+	        while ((line = productReader.readLine()) != null) {
+	            String[] data = line.split("\t");
 
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] data = line.split("\t");
+	            if (Double.parseDouble(data[12]) > 0.0) {
+	                String reportLine = String.format("%-10s%-15s%-15s%-10s%n", data[0], data[1], data[2], data[12]);
+	                writer.write(reportLine);
+	            }
 
-				if (Double.parseDouble(data[12]) > 0.0) {
-					String reportLine = String.format("%-10s%-15s%-15s%-10s%n", data[0], data[1], data[2], data[12]);
-					writer.write(reportLine);
-				}
+	        }
+	        productReader.close();
 
-			}
-			reader.close();
+	        BufferedReader workerReader = new BufferedReader(new FileReader(WORKERFILE));
 
-			reader = new BufferedReader(new FileReader(WORKERFILE));
+	        String workerHeaders = String.format("ID\tName\tPhone\tEmail\tOrdersNom\tavailable%n");
+	        writer.write("\n" + workerHeaders);
 
-			String workerHeaders = String.format("ID\tName\tPhone\tEmail\tOrdersNom\tavailable%n");
-			writer.write("\n" + workerHeaders);
+	        while ((line = workerReader.readLine()) != null) {
+	            String workerLine = line + "\n";
+	            writer.write(workerLine);
+	        }
+	        workerReader.close();
 
-			while ((line = reader.readLine()) != null) {
-				String workerLine = line + "\n";
-				writer.write(workerLine);
-			}
-			reader.close();
-
-			writer.close();
-			LOGGER.info("Report generated successfully!");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	        writer.close();
+	        LOGGER.info("Report generated successfully!");
+	    } catch (IOException e) {
+	        LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
+	    }
 	}
 
 }

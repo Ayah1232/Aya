@@ -38,6 +38,11 @@ public class Customer {
 	private static int ferquently;
 	private static ArrayList<Product> product = new ArrayList<Product>();
 
+	
+	private Customer()
+	{
+		
+	}
 
 
 	public static void createCustomer(String id, String n, String phone, String add, String city, String email,
@@ -311,19 +316,19 @@ public class Customer {
 	            // Update the customer data
 	            raf.seek(pos);
 	            StringBuilder sb = new StringBuilder();
-	            sb.append(customer.getId()).append("\t")
-	                    .append(customer.getName()).append("\t")
-	                    .append(customer.getPhone()).append("\t")
-	                    .append(customer.getAddetrss()).append("\t")
-	                    .append(customer.getCity()).append("\t")
-	                    .append(customer.getEmail()).append("\t")
-	                    .append(customer.getPassword()).append("\t")
-	                    .append(customer.getFreq()).append("\n");
+	            sb.append(Customer.getId()).append("\t")
+	                    .append(Customer.getName()).append("\t")
+	                    .append(Customer.getPhone()).append("\t")
+	                    .append(Customer.getAddetrss()).append("\t")
+	                    .append(Customer.getCity()).append("\t")
+	                    .append(Customer.getEmail()).append("\t")
+	                    .append(Customer.getPassword()).append("\t")
+	                    .append(Customer.getFreq()).append("\n");
 
 	            raf.writeBytes(sb.toString());
-	            LOGGER.info(String.format("Customer with ID %s updated successfully.", customer.getId()));
+	            LOGGER.info(String.format("Customer with ID %s updated successfully.", Customer.getId()));
 	        } else {
-	            LOGGER.warning(String.format("Customer with ID %s not found.", customer.getId()));
+	            LOGGER.warning(String.format("Customer with ID %s not found.", Customer.getId()));
 	        }
 	    } catch (IOException e) {
 	        LOGGER.log(java.util.logging.Level.WARNING, String.format("Error updating customer: %s", e.getMessage()));
@@ -428,101 +433,106 @@ public class Customer {
 		}
 		return id;
 	}
-
 	public static String getRowByCustomerEmail(String email) {
-		String row = null;
-		try {
-			File inputFile = new File(FILENAME);
-			BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	    String row = null;
+	    try {
+	        File inputFile = new File(FILENAME);
+	        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 
-			reader.readLine();
+	        reader.readLine();
 
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String emailM = line.split("\t")[5];
-				if (emailM.equals(email)) {
-					row = line;
-					break;
-				}
-			}
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            String emailM = line.split("\t")[5];
+	            if (emailM.equals(email)) {
+	                row = line;
+	                break;
+	            }
+	        }
 
-			// Close reader
-			reader.close();
+	        // Close reader
+	        reader.close();
 
-			if (row == null) {
-				LOGGER.warning(String.format("No order found with email %s", email));
-				return null;
-			}
+	        if (row == null) {
+	            LOGGER.warning(String.format("No order found with email %s", email));
+	            // return null or throw an exception based on your requirement
+	            return null;
+	        }
 
-		} catch (IOException e) {
-			LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error: %s", e.getMessage()), e);
-		}
+	    } catch (IOException e) {
+	        LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error: %s", e.getMessage()), e);
+	    }
 
-		return row;
+	    return row;
 	}
+
 
 	public static void generateInvoice(String customerEmail) {
-		try {
-			LocalDate today = LocalDate.now();
-			String dateStr = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-			String customerInformation = Customer.getRowByCustomerEmail(customerEmail);
-			if (customerInformation == null) {
-				return;
-			}
-			String[] customerTokens = customerInformation.split("\t");
-			File productFile = new File(PRODUCTS_FILENAME);
-			BufferedReader productReader = new BufferedReader(new FileReader(productFile));
-			List<String[]> products = new ArrayList<>();
-			String productLine;
-			while ((productLine = productReader.readLine()) != null) {
-				String[] productTokens = productLine.split("\t");
-				if (productTokens.length >= 10 && productTokens[9].equalsIgnoreCase(COMPLETE)
-						&& productTokens[1].equals(customerTokens[0])) {
-					products.add(productTokens);
-				}
-			}
-			productReader.close();
-// Check if there are any products with state "complete"
-			if (products.isEmpty()) {
-				LOGGER.info(String.format("No products with state \"complete\" found for customer with email %s",
-						customerEmail));
-				return;
-			}
-// Add customer information
-			String fileName = String.format("Invoice_%s_%d.txt", customerEmail, new Date(0).getTime());
-			FileWriter fileWriter = new FileWriter(fileName);
-			fileWriter.write("Customer Information%n");
-			fileWriter.write(String.format("Customer Id: %s%n", customerTokens[0]));
-			fileWriter.write(String.format("Name: %s%n", customerTokens[1]));
-			fileWriter.write(String.format("Email: %s%n", customerTokens[5]));
-			fileWriter.write(String.format("Delivery Address: %s - %s%n", customerTokens[3], customerTokens[4]));
-			fileWriter.write(String.format("Delivery Date: %s%n%n", dateStr));
-// Add items to be cleaned
-			fileWriter.write("Items to be Cleaned%n");
-			for (String[] productTokens : products) {
-				fileWriter.write(String.format("- Order number: %s%n", productTokens[0]));
-				fileWriter.write(String.format("- Category: %s%n", productTokens[2]));
-				fileWriter.write(String.format("- Material: %s%n", productTokens[3]));
-				fileWriter.write(String.format("- Color: %s%n", productTokens[4]));
-				fileWriter.write(String.format("- Dimension: %s%n", productTokens[5]));
-				fileWriter.write(String.format("- Quantity: %s%n", productTokens[7]));
-				fileWriter.write(String.format("- Picture: %s%n", productTokens[8]));
+	    try {
+	        LocalDate today = LocalDate.now();
+	        String dateStr = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	        String customerInformation = Customer.getRowByCustomerEmail(customerEmail);
+	        if (customerInformation == null) {
+	            return;
+	        }
+	        String[] customerTokens = customerInformation.split("\t");
+	        File productFile = new File(PRODUCTS_FILENAME);
+	        BufferedReader productReader = new BufferedReader(new FileReader(productFile));
+	        List<String[]> products = new ArrayList<>();
+	        String productLine;
+	        while ((productLine = productReader.readLine()) != null) {
+	            String[] productTokens = productLine.split("\t");
+	            if (productTokens.length >= 10 && productTokens[9].equalsIgnoreCase(COMPLETE)
+	                    && productTokens[1].equals(customerTokens[0])) {
+	                products.add(productTokens);
+	            }
+	        }
+	        productReader.close();
+	        
+	        // Check if there are any products with state "complete"
+	        if (products.isEmpty()) {
+	            LOGGER.info(String.format("No products with state \"complete\" found for customer with email %s",
+	                    customerEmail));
+	            return;
+	        }
+	        
+	        // Add customer information
+	        String fileName = String.format("Invoice_%s_%d.txt", customerEmail, new Date(0).getTime());
+	        FileWriter fileWriter = new FileWriter(fileName);
+	        fileWriter.write("Customer Information%n");
+	        fileWriter.write(String.format("Customer Id: %s%n", customerTokens[0]));
+	        fileWriter.write(String.format("Name: %s%n", customerTokens[1]));
+	        fileWriter.write(String.format("Email: %s%n", customerTokens[5]));
+	        fileWriter.write(String.format("Delivery Address: %s - %s%n", customerTokens[3], customerTokens[4]));
+	        fileWriter.write(String.format("Delivery Date: %s%n%n", dateStr));
+	        
+	        // Add items to be cleaned
+	        fileWriter.write("Items to be Cleaned%n");
+	        for (String[] productTokens : products) {
+	            fileWriter.write(String.format("- Order number: %s%n", productTokens[0]));
+	            fileWriter.write(String.format("- Category: %s%n", productTokens[2]));
+	            fileWriter.write(String.format("- Material: %s%n", productTokens[3]));
+	            fileWriter.write(String.format("- Color: %s%n", productTokens[4]));
+	            fileWriter.write(String.format("- Dimension: %s%n", productTokens[5]));
+	            fileWriter.write(String.format("- Quantity: %s%n", productTokens[7]));
+	            fileWriter.write(String.format("- Picture: %s%n", productTokens[8]));
 
-				if (Double.parseDouble(productTokens[7]) > 400.0 && Integer.parseInt(customerTokens[7]) > 10) {
-					double discount = 0.1 * Double.parseDouble(productTokens[7]);
-					double calc = Double.parseDouble(productTokens[7]) - discount;
-					productTokens[7] = Double.toString(calc);
-					fileWriter.write("You get 10% discount!%n");
-				}
-				fileWriter.write(String.format("- Price: %s%n%n", productTokens[11]));
-			}
-			fileWriter.close();
-			LOGGER.info("Invoice generated successfully.");
-		} catch (IOException e) {
-			LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error generating invoice: %s", e.getMessage()),
-					e);
-		}
+	            if (Double.parseDouble(productTokens[7]) > 400.0 && Integer.parseInt(customerTokens[7]) > 10) {
+	                double discount = 0.1 * Double.parseDouble(productTokens[7]);
+	                double calc = Double.parseDouble(productTokens[7]) - discount;
+	                productTokens[7] = Double.toString(calc);
+	                fileWriter.write("You get 10% discount!%n");
+	            }
+	            fileWriter.write(String.format("- Price: %s%n%n", productTokens[11]));
+	        }
+	        
+	        fileWriter.close();
+	        LOGGER.info("Invoice generated successfully.");
+	    } catch (IOException e) {
+	        LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error generating invoice: %s", e.getMessage()), e);
+	    }
 	}
+
 
 	public static void getStatistics() {
 		double totalDelivered = 0;

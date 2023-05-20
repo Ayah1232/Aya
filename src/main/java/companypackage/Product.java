@@ -386,12 +386,12 @@ while ((line = reader.readLine()) != null) {
 String[] fields = line.split("\t");
 int id = Integer.parseInt(fields[0]);
 if (id != orderNumToUpdate) {
-writer.write(String.format("%s%s%n", line, System.lineSeparator()));
+writer.write(String.format(LINE_FORMAT, line, System.lineSeparator()));
 } else {
 String updatedLine = String.format("%d\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%s\t%s\t%s\t%s\t%d",
        orderNumToUpdate, cusId, category, material, color, dimention, payType, quantity,
        picture, status, isReq, price, rate);
-writer.write(String.format("%s%s%n", updatedLine, System.lineSeparator()));
+writer.write(String.format(LINE_FORMAT, updatedLine, System.lineSeparator()));
 LOGGER.log(java.util.logging.Level.SEVERE, String.format("product with number %d updated!", orderNumToUpdate));
 }
 }

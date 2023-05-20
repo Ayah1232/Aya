@@ -337,36 +337,37 @@ public class Customer {
 
 
 	public static List<Customer> findByName(String fileName, String name) {
-		List<Customer> matchingCustomers = new ArrayList<>();
-		try (Scanner scanner = new Scanner(new File(fileName))) {
+	    List<Customer> matchingCustomers = new ArrayList<>();
+	    try (Scanner scanner = new Scanner(new File(fileName))) {
 
-			if (scanner.hasNextLine()) {
-				scanner.nextLine();
-			}
-			// Read customers
-			while (scanner.hasNextLine()) {
-				String[] fields = scanner.nextLine().split("\t");
-				String customerName = fields[1];
-				if (customerName.equalsIgnoreCase(name)) {
-			
-					Customer.setId(fields[0]);
-					Customer.setName(fields[1]);
-					Customer.setAddress(fields[2]);
-					Customer.setCity(fields[3]);
-					Customer.setPassword(fields[4]);
-					Customer.setEmail(fields[5]);
-					Customer.setPhone(fields[6]);
+	        if (scanner.hasNextLine()) {
+	            scanner.nextLine();
+	        }
+	        // Read customers
+	        while (scanner.hasNextLine()) {
+	            String line = scanner.nextLine();
+	            String[] fields = line.split("\t");
+	            String customerName = fields[1];
+	            if (customerName.equalsIgnoreCase(name)) {
 
-					matchingCustomers.add(new Customer());
-					LOGGER.info(Customer.getId());
+	                Customer.setId(fields[0]);
+	                Customer.setName(fields[1]);
+	                Customer.setAddress(fields[2]);
+	                Customer.setCity(fields[3]);
+	                Customer.setPassword(fields[4]);
+	                Customer.setEmail(fields[5]);
+	                Customer.setPhone(fields[6]);
 
-				}
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return matchingCustomers;
+	                matchingCustomers.add(new Customer());
+	                LOGGER.info(Customer.getId());
+	            }
+	        }
+	    } catch (FileNotFoundException e) {
+	        LOGGER.warning(String.format("File not found: %s", fileName));
+	    }
+	    return matchingCustomers;
 	}
+
 
 	public static boolean checkCustomerCredentials(String filename, String email, String password) {
 		try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
@@ -392,54 +393,56 @@ public class Customer {
 	}
 
 	public static String findNameByEmail(String email) {
-		String fileName = FILENAME;
-		String line = "";
-		String name = "";
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(fileName));
-			reader.readLine();
-			while ((line = reader.readLine()) != null) {
-				String[] data = line.split("\t");
-				if (data.length == 8 && data[5].equals(email)) {
-					name = data[1];
-					break;
-				}
-			}
-			reader.close();
-		} catch (IOException e) {
-			LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
-		}
-		return name;
+	    String fileName = FILENAME;
+	    String line = "";
+	    String name = "";
+	    try {
+	        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+	        String headerLine = reader.readLine(); // Store the header line
+	        while ((line = reader.readLine()) != null) {
+	            String[] data = line.split("\t");
+	            if (data.length == 8 && data[5].equals(email)) {
+	                name = data[1];
+	                break;
+	            }
+	        }
+	        reader.close();
+	    } catch (IOException e) {
+	        LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
+	    }
+	    return name;
 	}
 
+
 	public static String findIdByEmail(String email) {
-		String fileName = FILENAME;
-		String line = "";
-		String id = null; // Initialize the id variable to null
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(fileName));
-			// Skip the header line
-			reader.readLine();
-			while ((line = reader.readLine()) != null) {
-				String[] data = line.split("\t");
-				if (data[5].equals(email)) {
-					id = data[0];
-					break;
-				}
-			}
-			reader.close();
-		} catch (IOException e) {
-			LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
-		}
-		return id;
+	    String fileName = FILENAME;
+	    String line = "";
+	    String id = null; // Initialize the id variable to null
+	    try {
+	        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+	        // Skip the header line
+	        String headerLine = reader.readLine();
+	        while ((line = reader.readLine()) != null) {
+	            String[] data = line.split("\t");
+	            if (data[5].equals(email)) {
+	                id = data[0];
+	                break;
+	            }
+	        }
+	        reader.close();
+	    } catch (IOException e) {
+	        LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
+	    }
+	    return id;
 	}
+
 	public static String getRowByCustomerEmail(String email) {
 	    String row = null;
 	    try {
 	        File inputFile = new File(FILENAME);
 	        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 
-	        reader.readLine();
+	        String headerLine = reader.readLine(); // Store the header line
 
 	        String line;
 	        while ((line = reader.readLine()) != null) {
@@ -458,13 +461,13 @@ public class Customer {
 	            // return null or throw an exception based on your requirement
 	            return null;
 	        }
-
 	    } catch (IOException e) {
 	        LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error: %s", e.getMessage()), e);
 	    }
 
 	    return row;
 	}
+
 
 
 	public static void generateInvoice(String customerEmail) {
@@ -535,43 +538,44 @@ public class Customer {
 
 
 	public static void getStatistics() {
-		double totalDelivered = 0;
-		double totalCash = 0;
-		double totalPaid = 0;
-		double totalDebts = 0;
+	    double totalDelivered = 0;
+	    double totalCash = 0;
+	    double totalPaid = 0;
+	    double totalDebts = 0;
 
-		try (BufferedReader reader = new BufferedReader(new FileReader(PRODUCTS_FILENAME));
-				PrintWriter writer = new PrintWriter(new FileWriter("statistics.txt"))) {
+	    try (BufferedReader reader = new BufferedReader(new FileReader(PRODUCTS_FILENAME));
+	         PrintWriter writer = new PrintWriter(new FileWriter("statistics.txt"))) {
 
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] data = line.split("\t");
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            String[] data = line.split("\t");
 
-				if (data[9].equalsIgnoreCase(COMPLETE)) {
-					double price = Double.parseDouble(data[11]);
-					double quantity = Double.parseDouble(data[7]);
-					totalDelivered += quantity;
+	            if (data.length >= 12 && data[9].equalsIgnoreCase(COMPLETE)) {
+	                double price = Double.parseDouble(data[11]);
+	                double quantity = Double.parseDouble(data[7]);
+	                totalDelivered += quantity;
 
-					if (data[6].equalsIgnoreCase("Cash")) {
-						totalCash += price;
-					} else if (data[6].equalsIgnoreCase("Credit card")) {
-						totalPaid += price;
-					} else {
-						totalDebts += 0;
-					}
-				}
-			}
+	                if (data[6].equalsIgnoreCase("Cash")) {
+	                    totalCash += price;
+	                } else if (data[6].equalsIgnoreCase("Credit card")) {
+	                    totalPaid += price;
+	                } else {
+	                    totalDebts += 0;
+	                }
+	            }
+	        }
 
-			writer.printf("Total Delivered: %.2f%n", totalDelivered);
-			writer.printf("Total Cash: %.2f%n", totalCash);
-			writer.printf("Total Paid: %.2f%n", totalPaid);
-			writer.printf("Total Debts: %.2f%n", totalDebts);
+	        writer.printf("Total Delivered: %.2f%n", totalDelivered);
+	        writer.printf("Total Cash: %.2f%n", totalCash);
+	        writer.printf("Total Paid: %.2f%n", totalPaid);
+	        writer.printf("Total Debts: %.2f%n", totalDebts);
 
-			LOGGER.info("This is your statistics");
+	        LOGGER.info("This is your statistics");
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	    } catch (IOException e) {
+	        LOGGER.warning(String.format("An error occurred: %s", e.getMessage()));
+	    }
 	}
+
 
 }

@@ -134,7 +134,7 @@ public class GenerateInvoiceFeature {
 		
 		n = true;
 		
-	assertEquals(n, true);
+	assertEquals(true, n);
 	
 	
      	System.out.println();

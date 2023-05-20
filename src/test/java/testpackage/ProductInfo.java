@@ -12,6 +12,7 @@ public class ProductInfo {
 	
 	boolean flag;
 	String s;
+	Product d;
     private static final Logger LOGGER = Logger.getLogger(ProductInfo.class.getName());
 	public static final String WRONG = " is wrong! Try again ";
 
@@ -61,16 +62,16 @@ public class ProductInfo {
 	        switch (string.toLowerCase()) {
 	            case "category":
 	            case "name":
-	                Product.setCategory(string2);
+	               d.setCategory(string2);
 	                break;
 	            case "picture":
-	                Product.setPicture(string2);
+	                d.setPicture(string2);
 	                break;
 	            case "description":
 	                // Product.setdescription(string2);
 	                break;
 	            case "isrequiredspecialtreatment":
-	                Product.setIsrequiredSpecialTreatment(flag);
+	                d.setIsrequiredSpecialTreatment(flag);
 	                break;
 	        }
 	    } else {

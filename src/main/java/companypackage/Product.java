@@ -76,12 +76,12 @@ import java.util.logging.Logger;
 		return number;
 	}
 
-	public static String getStatus() {
+	public static  String getStatus() {
 
 		return status;
 	}
 
-	public static void createProduct(int nom, String cId, String dimention, String material, String color,
+	public static  void createProduct(int nom, String cId, String dimention, String material, String color,
 			String category, String payType, int quantity, String pic, double price) {
 		
 	    
@@ -96,7 +96,7 @@ import java.util.logging.Logger;
 			return;
 		}
 
-		Product.setIsrequiredSpecialTreatment(Test.isRequiredSpecialTreatment(category, material));
+		setIsrequiredSpecialTreatment(Test.isRequiredSpecialTreatment(category, material));
 
 		if (!Test.checkPicture(pic)) {
 			LOGGER.warning("Wrong Picture");
@@ -116,41 +116,41 @@ import java.util.logging.Logger;
 		
 		//Product product = new Product();
 
-		Product.setCategory(category);
-		Product.setNumber(nom);
-		Product.setCid(cId);
-		Product.setDimention(dimention);
-		Product.setMaterial(material);
-		Product.setColor(color);
-		Product.setPayment(payType);
-		Product.setQuantity(quantity);
-		Product.setPicture(pic);
-		Product.setStatus("waiting");
-		Product.setRate(0);
+		setCategory(category);
+		setNumber(nom);
+		setCid(cId);
+		setDimention(dimention);
+		setMaterial(material);
+		setColor(color);
+		setPayment(payType);
+		setQuantity(quantity);
+		setPicture(pic);
+		setStatus("waiting");
+		setRate(0);
 
 	}
 
-	private static void setRate(int i) {
+	private static  void setRate(int i) {
 
 		rate = i;
 
 	}
 
-	public static void addProduct() {
+	public static  void addProduct() {
 
 		try {
 
 			// Append new records to the file
 			FileWriter writer = new FileWriter(PRODUCT_FILENAME, true);
-			if (Product.getCategory() != null && Product.getCID() != null && Product.getDimention() != null
-					&& Product.getMaterial() != null && Product.getColor() != null && Product.getPayment() != null
-					&& Product.getQuantity() != 0 && Product.getpicture() != null && Product.getStatus() != null
-					&& Product.getPrice() != 0) {
-				writer.write(Product.getNumber() + "\t" + Product.getCID() + "\t" + Product.getCategory() + "\t"
-						+ Product.getMaterial() + "\t" + Product.getColor() + "\t" + Product.getDimention() + "\t"
-						+ Product.getPayment() + "\t" + Product.getQuantity() + "\t" + Product.getpicture() + "\t"
-						+ Product.getStatus() + "\t" + Product.getIRS() + "\t" + Product.getPrice() + "\t"
-						+ Product.getRate() + "\n");
+			if (getCategory() != null && getCID() != null && getDimention() != null
+					&& getMaterial() != null && getColor() != null && getPayment() != null
+					&& getQuantity() != 0 && getpicture() != null && getStatus() != null
+					&& getPrice() != 0) {
+				writer.write(getNumber() + "\t" + getCID() + "\t" + getCategory() + "\t"
+						+ getMaterial() + "\t" + getColor() + "\t" + getDimention() + "\t"
+						+ getPayment() + "\t" + getQuantity() + "\t" + getpicture() + "\t"
+						+ getStatus() + "\t" + getIRS() + "\t" +  getPrice() + "\t"
+						+ getRate() + "\n");
 				writer.close();
 				LOGGER.log(java.util.logging.Level.INFO,
 						"Your order now added, you can track your order and its status from your account.");
@@ -173,84 +173,84 @@ import java.util.logging.Logger;
 		return price;
 	}
 
-	private static boolean getIRS() {
+	private static  boolean getIRS() {
 
 		return isrequiredSpecialTreatment;
 	}
 
-	private static Object getpicture() {
+	private static  String getpicture() {
 
 		return picture;
 	}
 
-	private static Object getPayment() {
+	private static  String getPayment() {
 
 		return payementType;
 	}
 
-	private static Object getColor() {
+	private static  String getColor() {
 
 		return color;
 	}
 
-	private static Object getMaterial() {
+	private static  String getMaterial() {
 
 		return material;
 	}
 
-	private static String getDimention() {
+	private static  String getDimention() {
 
 		return dimensions;
 	}
 
-	private static String getCID() {
+	private static  String getCID() {
 
 		return cId;
 	}
 
-	private static void setStatus(String string) {
+	private static  void setStatus(String string) {
 
 		status = string;
 
 	}
 
-	private static void setPayment(String payType) {
+	private static  void setPayment(String payType) {
 
 		payementType = payType;
 
 	}
 
-	private static void setColor(String color2) {
+	private static  void setColor(String color2) {
 
 		color = color2;
 
 	}
 
-	private static void setMaterial(String material2) {
+	private static  void setMaterial(String material2) {
 
 		material = material2;
 
 	}
 
-	private static void setDimention(String dimention) {
+	private static  void setDimention(String dimention) {
 
 		dimensions = dimention;
 
 	}
 
-	private static void setCid(String cId2) {
+	private static  void setCid(String cId2) {
 
 		cId = cId2;
 
 	}
 
-	private static void setNumber(int nom) {
+	private static  void setNumber(int nom) {
 
 		number = nom;
 
 	}
 
-	public static int getLastOrderNumber() {
+	public static  int getLastOrderNumber() {
 		int lastOrderNumber = 0;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(PRODUCT_FILENAME));
@@ -413,7 +413,7 @@ LOGGER.log(java.util.logging.Level.SEVERE, String.format("%s%s", ERROR, e.getMes
 }
 
 
-	public static String getRowByProductNumber(int productNumber) {
+	public static  String getRowByProductNumber(int productNumber) {
 		String row = null;
 		try {
 			File inputFile = new File(PRODUCT_FILENAME);
@@ -445,7 +445,7 @@ LOGGER.log(java.util.logging.Level.SEVERE, String.format("%s%s", ERROR, e.getMes
 		return row;
 	}
 
-	public static double calculatePrice(String category, double height, double width, boolean needsSpecialTreatment,
+	public static  double calculatePrice(String category, double height, double width, boolean needsSpecialTreatment,
 			int q) {
 		double basePrice = 0.0;
 		if (category.equalsIgnoreCase("carpet")) {

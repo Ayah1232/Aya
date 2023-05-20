@@ -15,6 +15,7 @@ public class LogInFeature {
 	public  String keyName = "yasmeen", valuePass ="5466";
     boolean flag =true;
     int i ;
+    Customer c;
     public ArrayList<String> name , phone, address , email , id , password ,state;
 
 
@@ -96,10 +97,10 @@ public class LogInFeature {
 	
 		if (flag)
 		{
-			Customer.setName(keyName);
-			Customer.setPassword(valuePass);
+			c.setName(keyName);
+			c.setPassword(valuePass);
 			state.set(i, "true");
-			Customer.setCustomerLogedIn();
+			c.setCustomerLogedIn();
 		}
 		else
 		{
@@ -125,7 +126,7 @@ public void his_profile_will_open() {
 	
 
 	
-	assertTrue(Customer.getCustomerloged());
+	assertTrue(c.getCustomerloged());
 	System.out.print("Welcome!");
 
 

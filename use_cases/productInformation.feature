@@ -40,9 +40,9 @@ Scenario Outline: full correct Information.
   
     Examples: 
      |Category     | name      | Picture  |     description        | Isrequiredspecialtreatment   |
-      | "C"        |  "carpet"    | "p1"     | "red"                  |"false"                       |
+      | "C"        |  "carpet" | "p1"     | "red"                  |"false"                       |
       | "G"        |  "ground" |  "p2"    |  "green"               |"false"                       |
-      | "C"        |  "carpet" | "p3"     | "yellow"                |"false"                       |
+      | "C"        |  "carpet" | "p3"     | "yellow"               |"false"                       |
       | "C"        |  "carpet" | "p4"     | "blue"                 |"false"                       |
       | "G"        |  "ground" | "p5"     | "red"                  |"false"                       |
       | "C"        |  "carpet" | "p6"     | "red"                  |"false"                       |

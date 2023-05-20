@@ -272,46 +272,45 @@ import java.util.logging.Logger;
 	}
 
 	public static void trackStatus(String customerId) {
-		boolean b = false;
-		Scanner s = new Scanner(System.in);
-		try (BufferedReader reader = new BufferedReader(new FileReader(PRODUCT_FILENAME))) {
-			StringBuilder sb = new StringBuilder();
-			String header = reader.readLine(); 
-			sb.append(header).append("\n");
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] data = line.split("\t"); 
-				if (data[1].equals(customerId)) { 
-					LOGGER.info(String.format("Order with number %s, category %s, material %s, color %s, dimension %s, quantity %s, picture %s is now in %s status%n",
-						    data[0], data[2], data[3], data[4], data[5], data[7], data[8], data[9]));
+	    boolean b = false;
+	    Scanner s = new Scanner(System.in);
+	    try (BufferedReader reader = new BufferedReader(new FileReader(PRODUCT_FILENAME))) {
+	        StringBuilder sb = new StringBuilder();
+	        String header = reader.readLine(); 
+	        sb.append(header).append("\n");
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            String[] data = line.split("\t"); 
+	            if (data[1].equals(customerId)) { 
+	                LOGGER.info(String.format("Order with number %s, category %s, material %s, color %s, dimension %s, quantity %s, picture %s is now in %s status%n",
+	                        data[0], data[2], data[3], data[4], data[5], data[7], data[8], data[9]));
 
-					b = true;
-					if (data[9].equalsIgnoreCase("complete")) {
-						LOGGER.info("How do you rate our cleaning?");
-						LOGGER.info("1 , 2, ,3 ,4 or 5");
-						int i = s.nextInt();
-						data[12] = Integer.toString(i);
-						String updatedLine = String.join("\t", data); 
-																		
-						sb.append(updatedLine).append("\n"); 
-					}
-				} else {
-					sb.append(line).append("\n"); 
-				}
-			}
-			if (!b) {
-				LOGGER.warning("You don't have any orders to track");
-			} else {
-				
-				FileWriter writer = new FileWriter(PRODUCT_FILENAME);
-				writer.write(sb.toString());
-				writer.close();
-				LOGGER.info("Ratings updated successfully.");
-			}
-		} catch (IOException e) {
-			LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error updating ratings: %s", e.getMessage()), e);
-		}
+	                b = true;
+	                if (data[9].equalsIgnoreCase("complete")) {
+	                    LOGGER.info("How do you rate our cleaning?");
+	                    LOGGER.info("1, 2, 3, 4, or 5");
+	                    int i = s.nextInt();
+	                    data[12] = Integer.toString(i);
+	                    String updatedLine = String.join("\t", data); 
+	                    sb.append(updatedLine).append("\n"); 
+	                }
+	            } else {
+	                sb.append(line).append("\n"); 
+	            }
+	        }
+	        if (!b) {
+	            LOGGER.warning("You don't have any orders to track");
+	        } else {
+	            FileWriter writer = new FileWriter(PRODUCT_FILENAME);
+	            writer.write(sb.toString());
+	            writer.close();
+	            LOGGER.info("Ratings updated successfully.");
+	        }
+	    } catch (IOException e) {
+	        LOGGER.log(java.util.logging.Level.SEVERE, String.format("Error updating ratings: %s", e.getMessage()), e);
+	    }
 	}
+
 
 	public static void deleteProduct(int idToDelete) {
 	    try {
@@ -327,23 +326,32 @@ import java.util.logging.Logger;
 	        writer.write(headerLine + System.lineSeparator());
 
 	        String line;
+	        boolean found = false;
 	        while ((line = reader.readLine()) != null) {
 	            String[] parts = line.split("\t");
 	            int id = Integer.parseInt(parts[0]);
 	            String status = parts[9];
-	            if (id == idToDelete && status.equals("waiting")) {
-	                LOGGER.log(java.util.logging.Level.SEVERE,
-	                        String.format("%s%s and status waiting deleted!", PRODUCT_NUMBER_PREFIX, idToDelete));
-	            } else if (id != idToDelete) {
-	                writer.write(line + System.lineSeparator());
-	            } else {
-	                LOGGER.log(java.util.logging.Level.WARNING,
-	                        String.format("%s%s cannot be deleted due to invalid status", PRODUCT_NUMBER_PREFIX, idToDelete));
+	            if (id == idToDelete) {
+	                if (status.equals("waiting")) {
+	                    LOGGER.log(java.util.logging.Level.SEVERE,
+	                            String.format("%s%s and status waiting deleted!", PRODUCT_NUMBER_PREFIX, idToDelete));
+	                    found = true;
+	                    continue; // Skip writing the line to the output file
+	                } else {
+	                    LOGGER.log(java.util.logging.Level.WARNING,
+	                            String.format("%s%s cannot be deleted due to invalid status", PRODUCT_NUMBER_PREFIX, idToDelete));
+	                    found = true;
+	                }
 	            }
+	            writer.write(line + System.lineSeparator());
 	        }
 
 	        reader.close();
 	        writer.close();
+
+	        if (!found) {
+	            LOGGER.warning(String.format("%s%s not found for deletion", PRODUCT_NUMBER_PREFIX, idToDelete));
+	        }
 
 	        // Delete the input file and rename the temporary file to the input file name
 	        boolean deleteInputFile = inputFile.delete();
@@ -364,6 +372,7 @@ import java.util.logging.Logger;
 	                e);
 	    }
 	}
+
 
 
 	public static void updateProduct(int orderNumToUpdate, String cusId, String category, String material, String color,

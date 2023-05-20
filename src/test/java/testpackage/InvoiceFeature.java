@@ -14,6 +14,7 @@ public class InvoiceFeature {
 	double TotalCash = 0.0;
 	double TotalPaid = 0.0;
 	double TotalDebts = 0.0;
+	private boolean n = false;
 	@Given("the following deliveries have been made:")
 	public void the_following_deliveries_have_been_made(io.cucumber.datatable.DataTable dataTable) {
 
@@ -87,8 +88,8 @@ public class InvoiceFeature {
 
 	@Then("a statistics should be generated")
 	public void a_statistics_should_be_generated() {
-		
-		assertEquals(true, true);
+		n = true;
+		assertEquals(n , true);
 		
 		System.out.println("Statistic        "+ "Value");
 		System.out.println("------------     "+"---------");

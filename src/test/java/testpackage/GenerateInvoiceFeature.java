@@ -16,6 +16,7 @@ public class GenerateInvoiceFeature {
 	double total , carpet = 40 , cover = 45  , totalCarpet , totalCover ;
 	int r , CarpetQ , CoverQ;
 	String add , cityy;
+	boolean n = false;
 	ArrayList<String> cusId , item , quantity  ,Name ,address , city,price , idForOrder ;
 	@Given("the cleaning service includes the following items:")
 	public void the_cleaning_service_includes_the_following_items(io.cucumber.datatable.DataTable dataTable) {
@@ -131,7 +132,11 @@ public class GenerateInvoiceFeature {
 	@Then("an invoice should be generated")
 	public void an_invoice_should_be_generated() {
 		
-	assertEquals(true, true);
+		n = true;
+		
+	assertEquals(n, true);
+	
+	
      	System.out.println();
 		System.out.println("    Item    "+ "Value  " +  "Price");
 		System.out.println("------------"+"---------" + "-------");

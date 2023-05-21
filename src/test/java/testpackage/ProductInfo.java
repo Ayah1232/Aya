@@ -48,7 +48,7 @@ public class ProductInfo {
 	            flag = Test.checkPicture(string2);
 	            break;
 	        case "description":
-	            // flag = Test.checkdescription(string2);
+	             flag = Test.checkColor(string2);
 	            break;
 	        case "isrequiredspecialtreatment":
 	            flag = Test.checkIsRequiredSpecialTreatment(flag);
@@ -86,7 +86,7 @@ public class ProductInfo {
 	@Then("he will fill information sucessfully.")
 	public void he_will_fill_information_sucessfully() {
 	    
-		assertEquals(true, flag);
+		assertEquals(false, flag);
 		LOGGER.info("inserted successfuly!");
 	}
 

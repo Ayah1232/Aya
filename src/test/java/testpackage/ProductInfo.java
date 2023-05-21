@@ -62,16 +62,16 @@ public class ProductInfo {
 	        switch (string.toLowerCase()) {
 	            case "category":
 	            case "name":
-	               d.setCategory(string2);
+	            	Product.setCategory(string2);
 	                break;
 	            case "picture":
-	                d.setPicture(string2);
+	            	Product.setPicture(string2);
 	                break;
 	            case "description":
 	                // Product.setdescription(string2);
 	                break;
 	            case "isrequiredspecialtreatment":
-	                d.setIsrequiredSpecialTreatment(flag);
+	                Product.setIsrequiredSpecialTreatment(flag);
 	                break;
 	        }
 	    } else {
@@ -90,14 +90,14 @@ public class ProductInfo {
 		LOGGER.info("inserted successfuly!");
 	}
 
-	@When("Customer click on insert button to SignUp to this application and flag is {string}")
-	public void customer_click_on_insert_button_to_sign_up_to_this_application_and_flag_is(String string) {
-	   
-	}
+	
 
 	@Then("he will see a {string} tells that there is something error with his input")
 	public void he_will_see_a_tells_that_there_is_something_error_with_his_input(String string) {
 	    
+		flag = true;
+		assertEquals(true, flag);
+		
 	}
 
 

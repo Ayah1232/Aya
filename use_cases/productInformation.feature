@@ -23,14 +23,13 @@ Scenario Outline: full correct Information.
    Then he will fill information sucessfully.
    
      Examples: 
-      |Category    | name      | Picture  |     description        | Isrequiredspecialtreatment   |
-      | "C"        |  "carpet" | "p.png"     | "red"                  |"false"                       |
+      |Category    | name      | Picture      |     description      | Isrequiredspecialtreatment   |
+      | "C"        |  "carpet" | "p.png"      |    "red"              |"false"                       |
       | "G"        |  "carpet" | "p2.jpeg"    |  "green"               |"false"                       |
       | "G"        |  "cover"  |  "p2.png"    |  "green"               |"false"                       |
   @p3
   Scenario Outline: full Information with error  
-   When Customer click on insert button to SignUp to this application and flag is 'false'
-   And he fills 'Category' with <Category>
+   When he fills 'Category' with <Category>
    And he fills 'name' with <name>
    And he fills 'Picture' with <Picture>
    And he fills 'description' with <description>

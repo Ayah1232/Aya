@@ -51,9 +51,7 @@ public class Customer {
 	private static final String ERROR_MESSAGE = "Customer creation failed due to invalid input.";
 	private static final String WELCOME_MESSAGE = "Welcome to our application, %s!";
 
-	public static void createCustomer(String id, String n, String phone, String add, String city, String email,
-	        String password) 
-	{
+	public static void createCustomer(String id, String n, String phone, String add, String city, String email, String password) {
 	    if (!Test.checkID(id)) {
 	        LOGGER.warning("ID is wrong!");
 	        return;
@@ -95,21 +93,12 @@ public class Customer {
 
 	    if (Test.checkID(id) && Test.checkCategory(n) && Test.checkPhone(phone)
 	            && Test.checkAddress(add) && Test.checkEmail(email) && Test.checkPassword(password)) {
-
-	        Customer.setName(n);
-	        Customer.setPhone(phone);
-	        Customer.setAddress(add);
-	        Customer.setEmail(email);
-	        Customer.setPassword(password);
-	        Customer.setCity(city);
-	        Customer.setId(id);
-	        Customer.setFrequently(0);
-
 	        LOGGER.info(String.format(WELCOME_MESSAGE, Customer.getName()));
 	    } else {
 	        LOGGER.warning(ERROR_MESSAGE);
 	    }
 	}
+
 
 
 
